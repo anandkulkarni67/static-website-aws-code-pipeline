@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+  build:
+    commands:
+      - npm install
+      - npm run build
+      - appVersion=$(npm --loglevel silent run version)
+      - appName=$(npm --loglevel silent run name)
+      - echo $appVersion
+      - echo $appName
+      - export ARTIFACT_NAME=$appName-$appVersion
+
+artifacts:
+  files:
+    - '**/*'
+  name: $ARTIFACT_NAME

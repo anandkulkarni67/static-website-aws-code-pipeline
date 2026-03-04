@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'A template to create resources for a static website'
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Default: 'static-website-aws-code-pipeline'
+
+Resources:
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join [ '-', [ !Ref ApplicationName, 'code-build']]
+      Description: 'An IAM service role for the code build service.'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: 'S3-object-read+write-access'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:DeleteObject'
+                  - 's3:ListBucket'
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join [ '-', [ !Ref ApplicationName, 'code-pipeline']]
+      Description: 'An IAM service role for the code pipeline service.'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codepipeline.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: 'use-codestar-connection'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - 'codestar-connections:UseConnection'
+        - PolicyName: 'S3-object-read-write-access'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - 's3:PutObject'
+        - PolicyName: 'start-build-permissions'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - 'codebuild:StartBuild'
+                  - 'codebuild:BatchGetBuilds'
+
+Outputs:
+  CodeBuildRoleArn:
+    Value: !GetAtt CodeBuildServiceRole.Arn
+    Export:
+      Name: !Join [ '-', [ !Ref ApplicationName, 'code-build']]
+    Description: 'Code Build service role Amazone Resource Name'
+  CodePipelineRoleArn:
+    Value: !GetAtt CodePipelineServiceRole.Arn
+    Export:
+      Name: !Join [ '-', [ !Ref ApplicationName, 'code-pipeline']]
+    Description: 'Code Pipeline service role Amazone Resource Name'
