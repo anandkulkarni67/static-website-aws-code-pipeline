@@ -1,4 +1,4 @@
-# Static website deployed to AWS cloudfront served from S3 with CICD implementation using AWS CodePipeline
+# A Static website deployed to AWS cloudfront served from S3 with CICD implementation using AWS CodePipeline
 
 ## download and install dependencies
 ```
