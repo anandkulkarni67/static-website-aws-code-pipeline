@@ -1,5 +1,5 @@
 {
-  "name": "static-website-aws-s3-cloudfront-code-pipeline",
+  "name": "static-website-aws-code-pipeline",
   "version": "2.0.0",
   "private": true,
   "scripts": {
